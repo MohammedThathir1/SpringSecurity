@@ -16,10 +16,15 @@ public class Register {
     RegisterService registerService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Login login){
-        registerService.loginUser(login);
-        return new ResponseEntity<>("success",HttpStatus.OK);
-    }
+    public String loginUser(@RequestBody Login login){
+
+        return registerService.loginUser(login);
+       }
+
+//       @GetMapping("/login")
+//       public String login(){
+//        return "Login";
+//       }
 
     @PostMapping("/signup")
     public ResponseEntity<?> addUser(@RequestBody Login login){
