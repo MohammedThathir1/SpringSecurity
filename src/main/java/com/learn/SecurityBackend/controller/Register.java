@@ -15,9 +15,10 @@ public class Register {
     @Autowired
     RegisterService registerService;
 
-    @GetMapping("/login")
-    public String setUser(){
-        return "Enter User details";
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody Login login){
+        registerService.loginUser(login);
+        return new ResponseEntity<>("success",HttpStatus.OK);
     }
 
     @PostMapping("/signup")

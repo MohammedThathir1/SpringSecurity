@@ -20,13 +20,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
-        Login login = (Login) welcomeRepo.findByUsername(name)
+        return welcomeRepo.findByUsername(name)
                 .orElseThrow(() -> new UsernameNotFoundException("User not Found"));
 
-        return User.builder()
-                .username(login.getUsername())
-                .password(login.getPassword())
-                .roles(login.getRole())
-                .build();
+//        return User.builder()
+//                .username(login.getUsername())
+//                .password(login.getPassword())
+//                .roles(login.getRole())
+//                .build();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,13 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class Confi {
 
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);
-//        provider.setPasswordEncoder(passwordEncoder());
-//        return provider;
-//    }
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -40,19 +41,23 @@ public class Confi {
                                        .permitAll()
                         .anyRequest().authenticated()
                         )
-                    .httpBasic(Customizer.withDefaults());
+                    .httpBasic(Customizer.withDefaults())
+               .sessionManagement(
+                       session->
+                               session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                       );
 
-           // http.authenticationProvider(authenticationProvider());
+           http.authenticationProvider(authenticationProvider());
 
             return http.build();
         }
 
         @Autowired
-        private final UserDetailsServiceImpl userDetailsService;  // Declare it here
+        private final UserDetailsService userDetailsService;  // Declare it here
        // Assuming you have this
 
     // Constructor injection
-        public Confi(UserDetailsServiceImpl userDetailsService) {
+        public Confi(UserDetailsService userDetailsService) {
             this.userDetailsService = userDetailsService;
         }
 
