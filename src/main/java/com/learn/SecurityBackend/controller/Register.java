@@ -8,17 +8,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/register")
+@CrossOrigin("*")
 public class Register {
 
     @Autowired
     RegisterService registerService;
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody Login login){
-
-        return registerService.loginUser(login);
+    public ResponseEntity<?> loginUser(@RequestBody Login login){
+        String token = registerService.loginUser(login);
+        Map<String, String> res = new HashMap<>();
+        res.put("token",token);
+        return ResponseEntity.ok(res);
        }
 
 //       @GetMapping("/login")
@@ -28,6 +34,7 @@ public class Register {
 
     @PostMapping("/signup")
     public ResponseEntity<?> addUser(@RequestBody Login login){
+        login.setRole("User");
         registerService.addUser(login);
         return new ResponseEntity<>("User created",HttpStatus.CREATED);
     }
