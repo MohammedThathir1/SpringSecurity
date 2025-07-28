@@ -56,18 +56,23 @@ public class Confi {
                .authorizeHttpRequests
                        (
                                auth -> auth
-                        .requestMatchers("/api/register/**")
+                        .requestMatchers("/api/register/**",
+                                "/api/oauth/**")
                                        .permitAll()
                         .anyRequest().authenticated()
                         )
+               .oauth2Login(oauth ->
+                       oauth.
+                       defaultSuccessUrl("http://localhost:5173/oauth-success", true))
                     .httpBasic(Customizer.withDefaults())
                .sessionManagement(
                        session->
                                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                        )
+               .authenticationProvider(authenticationProvider())
                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-           http.authenticationProvider(authenticationProvider());
+          // http.authenticationProvider(authenticationProvider());
 
             return http.build();
         }
