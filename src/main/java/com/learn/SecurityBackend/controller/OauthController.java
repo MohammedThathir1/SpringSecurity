@@ -14,16 +14,18 @@ public class OauthController {
     @Autowired
     private OauthService oauthService;
 
+    @GetMapping("/github")
+    public ResponseEntity<?> oauthGithub(@RequestParam String code){
+
+        System.out.println("Received code: " + code);
+
+        return oauthService.oauthGithub(code);
+    }
+
     @GetMapping("/google")
     public ResponseEntity<?> oauthGoogle(@RequestParam String code){
         //String code = body.get("code");
         System.out.println("Received code: " + code);
         return oauthService.oauthGoogle(code);
-    }
-    @GetMapping("/github")
-    public ResponseEntity<?> oauthGithub(@RequestParam String code){
-
-        System.out.println("Received code: " + code);
-        return oauthService.oauthGithub(code);
     }
 }

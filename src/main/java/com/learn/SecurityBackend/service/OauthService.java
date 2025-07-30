@@ -16,10 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -62,8 +59,8 @@ public class OauthService {
             params.add("code",code);
             params.add("client_id", clientId);
             params.add("client_secret", clientSecret);
-            params.add("redirect_uri", "http://localhost:5173/oauth-success");
-           // params.add("redirect_uri", "https://developers.google.com/oauthplayground");
+            params.add("redirect_uri", "http://localhost:5173/login");
+          //  params.add("redirect_uri", "https://developers.google.com/oauthplayground");
             params.add("grant_type", "authorization_code");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -119,7 +116,9 @@ public class OauthService {
             }
 
             String accessToken = (String) tokenResponse.getBody().get("access_token");
-
+            if (accessToken == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token not found");
+            }
             // Step 2: Fetch user info using the access token
             HttpHeaders userHeaders = new HttpHeaders();
             userHeaders.setBearerAuth(accessToken);
@@ -134,6 +133,9 @@ public class OauthService {
 
             Map<String, Object> userInfo = userResponse.getBody();
             String email = (String) userInfo.get("email");
+
+            System.out.println("Token response: " + tokenResponse.getBody());
+            System.out.println("User info: " + userInfo);
 
             // GitHub may not return email in /user, fetch separately
             if (email == null || email.isEmpty()) {
@@ -169,11 +171,13 @@ public class OauthService {
             }
 
             String jwtToken = jwtService.generateToken(email);
-            return ResponseEntity.ok(Collections.singletonMap("token", jwtToken));
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwtToken);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("OAuth GitHub error: " + e.getMessage());
         }
     }
 

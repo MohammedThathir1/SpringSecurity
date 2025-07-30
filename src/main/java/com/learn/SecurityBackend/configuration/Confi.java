@@ -63,7 +63,7 @@ public class Confi {
                         )
                .oauth2Login(oauth ->
                        oauth.
-                       defaultSuccessUrl("http://localhost:5173/oauth-success", true))
+                       defaultSuccessUrl("http://localhost:5173/welcome", true))
                     .httpBasic(Customizer.withDefaults())
                .sessionManagement(
                        session->
